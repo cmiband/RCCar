@@ -109,6 +109,7 @@ void loop() {
   if (result == ESP_OK) {
     Serial.println("Sending confirmed");
   }
+  else {
     Serial.println("Sending error");
   }
   delay(50);
