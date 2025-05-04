@@ -1,11 +1,14 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define INPUT_IGNORE_LOWER_THRESHOLD 2900
-#define INPUT_IGNORE_UPPER_THRESHOLD 3100
+#define INPUT_IGNORE_LOWER_THRESHOLD 1800
+#define INPUT_IGNORE_UPPER_THRESHOLD 2050
 #define INPUT_MAXIMUM_VALUE 4095
 #define GAS_JOYSTICK_PIN 18
-#define STEERING_JOYSTICK_PIN 19
+#define STEERING_JOYSTICK_PIN 20
+#define CAR_GAS_DIODE_PIN 7
+#define CAR_STEERING_DIODE_PIN 8
+#define SIGNAL_SENT_DIODE_PIN 9
 
 uint8_t broadcastAddress[] = {0x14, 0x2B, 0x2F, 0xD7, 0x45, 0x0C};
 int previouslyCalculatedGasInput = 100;
@@ -45,9 +48,9 @@ void setup() {
     return;
   }
 
-  pinMode(9, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(7, OUTPUT);
+  pinMode(SIGNAL_SENT_DIODE_PIN, OUTPUT);
+  pinMode(CAR_STEERING_DIODE_PIN, OUTPUT);
+  pinMode(CAR_GAS_DIODE_PIN, OUTPUT);
 }
 
 bool isValueInRange(int value, int lowerRange, int upperRange) {
@@ -63,15 +66,16 @@ bool isValueBelowThreshold(int value, int threshold) {
 }
 
 int getNormalizedGasInput(int gasInput) {
-  if(isValueAboveThreshold(gasInput, INPUT_IGNORE_LOWER_THRESHOLD)) {
-    digitalWrite(8, HIGH);
-    digitalWrite(7, LOW);
-    return 0;
-  } else {
-    digitalWrite(8, LOW);
-    digitalWrite(7, HIGH);
+  if(isValueBelowThreshold(gasInput, INPUT_IGNORE_LOWER_THRESHOLD)) {
+    digitalWrite(CAR_GAS_DIODE_PIN, HIGH);
     return 1;
+  } else if(isValueAboveThreshold(gasInput, INPUT_IGNORE_UPPER_THRESHOLD)){
+    digitalWrite(CAR_GAS_DIODE_PIN, HIGH);
+    return -1;
   }
+
+  digitalWrite(CAR_GAS_DIODE_PIN, LOW);
+  return 0;
 }
 
 int getNormalizedSteeringInput(int steeringInput) {
@@ -82,6 +86,11 @@ int getNormalizedSteeringInput(int steeringInput) {
     percentage = ((float)(steeringInput-INPUT_IGNORE_UPPER_THRESHOLD))/((float)(INPUT_MAXIMUM_VALUE-INPUT_IGNORE_UPPER_THRESHOLD));
   }
 
+  if(percentage != 0) {
+    digitalWrite(CAR_STEERING_DIODE_PIN, HIGH);
+  } else {
+    digitalWrite(CAR_STEERING_DIODE_PIN, LOW);
+  }
   return (int)(percentage * 45.0f);
 }
 
@@ -93,13 +102,14 @@ void loop() {
   int normalizedSteeringInput = getNormalizedSteeringInput(steeringInput);
 
   if(normalizedGasInput == previouslyCalculatedGasInput && normalizedSteeringInput == previouslyCalculatedSteeringInput) {
-    digitalWrite(9, LOW);
+    digitalWrite(SIGNAL_SENT_DIODE_PIN, LOW);
     return;
   }
-  digitalWrite(9, HIGH);
+  digitalWrite(SIGNAL_SENT_DIODE_PIN, HIGH);
   previouslyCalculatedGasInput = normalizedGasInput;
   previouslyCalculatedSteeringInput = normalizedSteeringInput;
-  Serial.println("Sending with steeringInput --------------");
+  Serial.println("Sending with gasInput and steeringInput --------------");
+  Serial.println(gasInput);
   Serial.println(normalizedSteeringInput);
   controlInputs.gi = normalizedGasInput;
   controlInputs.si = normalizedSteeringInput;
