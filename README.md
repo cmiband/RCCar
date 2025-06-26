@@ -8,7 +8,8 @@ Project consits of two main modules:
  - Card
 
 Remote control module contains Arduino Nano ESP32 microcontrollers connected with two thumb joysticks and diodes. The microcontroller reads data from joysticks and then, when change was detected, sends information about gas and steering. Sending is performed via ESP NOW protocol. Everything is connected together via breadboard, and powered by a coverter that takes two AA batteries.
-![Bez nazwy](https://github.com/user-attachments/assets/fc0b156d-4e2a-4e17-854d-f45f9632a875)
+
+![-vr4cYT3](https://github.com/user-attachments/assets/fcdb0917-2525-4a23-b754-cc16fa2f7b63)
 
 
 
