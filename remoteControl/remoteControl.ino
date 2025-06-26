@@ -9,6 +9,7 @@
 #define CAR_GAS_DIODE_PIN 7
 #define CAR_STEERING_DIODE_PIN 8
 #define SIGNAL_SENT_DIODE_PIN 9
+#define DELAY_AMOUNT 50
 
 uint8_t broadcastAddress[] = {0x14, 0x2B, 0x2F, 0xD7, 0x45, 0x0C};
 int previouslyCalculatedGasInput = 100;
@@ -24,8 +25,8 @@ struct remoteControlMessage controlInputs;
 esp_now_peer_info_t peerInfo;
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  Serial.print("\r\nPacket Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
 }
 
 void setup() {
@@ -33,7 +34,7 @@ void setup() {
   WiFi.mode(WIFI_STA);
 
   if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
+    Serial.println("ESP NOW ERROR");
     return;
   }
 
@@ -44,7 +45,7 @@ void setup() {
   peerInfo.encrypt = false;
   
   if (esp_now_add_peer(&peerInfo) != ESP_OK){
-    Serial.println("Failed to add peer");
+    Serial.println("ESP PEER ERROR");
     return;
   }
 
@@ -108,9 +109,6 @@ void loop() {
   digitalWrite(SIGNAL_SENT_DIODE_PIN, HIGH);
   previouslyCalculatedGasInput = normalizedGasInput;
   previouslyCalculatedSteeringInput = normalizedSteeringInput;
-  Serial.println("Sending with gasInput and steeringInput --------------");
-  Serial.println(gasInput);
-  Serial.println(normalizedSteeringInput);
   controlInputs.gi = normalizedGasInput;
   controlInputs.si = normalizedSteeringInput;
   
@@ -122,5 +120,5 @@ void loop() {
   else {
     Serial.println("Sending error");
   }
-  delay(50);
+  delay(DELAY_AMOUNT);
 }
