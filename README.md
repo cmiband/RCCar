@@ -1,6 +1,8 @@
 # Remotely Controller Car
 ## Quick introduction
 My goal in this project was to create my own remotely controller car. Idea of creating my own IOT/embedded project came into my mind a while ago.  I started my journey from learning ESP32 and electronics basics from sources I found on the internet. Then, I made a decision that a project I'm going to build will be a remotely controlled car. I bought a lot of parts on the go, mainly when I discovered that I approach I have taken was invalid or not optimal(happened a few times).
+## Video presenting car movement
+[https://youtu.be/bGT8Jp7CBA4](https://www.youtube.com/watch?v=bGT8Jp7CBA4)
 ## Architecture overview
 Project consists of two main modules: 
 
