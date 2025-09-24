@@ -10,7 +10,7 @@ Project consists of two main modules:
  - Car
 
 ### Remote Control
-Remote control module contains Arduino Nano ESP32 microcontrollers connected with two thumb joysticks and diodes. The microcontroller reads data from joysticks and then, when change was detected, sends information about gas and steering. Sending is performed via ESP NOW protocol. Everything is connected together via breadboard, and powered by a converter that takes two AA batteries.
+Remote control module contains Arduino Nano ESP32 microcontroller connected with two thumb joysticks and diodes. The microcontroller reads data from joysticks and then, when change was detected, sends information about gas and steering. Sending is performed via ESP NOW protocol. Everything is connected together via breadboard, and powered by a converter that takes two AA batteries.
 
 ![-vr4cYT3](https://github.com/user-attachments/assets/fcdb0917-2525-4a23-b754-cc16fa2f7b63)
 
